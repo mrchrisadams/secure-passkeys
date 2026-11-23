@@ -199,11 +199,15 @@ class Secure_Passkeys_Frontend_Ajax
 
         try {
             $wenauthn = new Secure_Passkeys_WebAuthn();
-            $wenauthn->insert(array_merge($data, [
+            $inserted = $wenauthn->insert(array_merge($data, [
                 'security_key_name' => $security_key_name,
                 'created_at' => current_time('mysql'),
                 'updated_at' => current_time('mysql')
             ]));
+
+            if (!$inserted) {
+                throw new Exception('Failed to insert passkey credential');
+            }
         } catch (Exception $e) {
             wp_send_json_error(__('Failed to register the passkey. Please try again later.', 'secure-passkeys'));
         }
